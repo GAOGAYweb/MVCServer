@@ -4,6 +4,7 @@ import diary.bean.User;
 import org.hibernate.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 public class UserDao{
 
@@ -45,6 +46,23 @@ public class UserDao{
         Query query = getSession().createQuery(hql);// 本地SQL检索方式
         query.setInteger(0, Integer.parseInt(userId));
         return (User)query.uniqueResult();
+    }
+    public List<User> queryFriendList(String userid){
+        String hql="from User u where u.id="+userid;
+        Query query=getSession().createQuery(hql);
+        User u= (User) query.uniqueResult();
+        String[] friends=u.getFriends().split(",");
+        if(friends.length==0)return null;
+        String hql2="from User u where";
+        String temp="";
+        for(String s : friends){
+            temp+=(" or id="+s);
+        }
+        hql2+=temp.substring(3,temp.length());
+        System.out.println(hql2);
+        Query query2=getSession().createQuery(hql2);
+        List<User> list=query2.list();
+        return list;
     }
 
 }

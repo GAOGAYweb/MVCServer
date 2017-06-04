@@ -1,6 +1,8 @@
 package diary.action;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import diary.bean.User;
 import diary.dao.UserDao;
@@ -16,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/user")
@@ -113,11 +116,44 @@ public class UserController {
         }
         jsonObject.put("friendsNum",friendsNum);
         jsonObject.put("imageSrc",user.getImageSrc()+"");
-        result.put("data",jsonObject);
+        result.put("data",jsonObject.toJSONString());
         result.put("status","200");
         writer.write(result.toJSONString());
         writer.flush();
 
+
+    }
+    @RequestMapping(params = "method=friendList",method = RequestMethod.POST)
+    public void friendList(HttpServletResponse response,HttpServletRequest request)throws IOException{
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json;charset=utf-8");
+        response.setCharacterEncoding("utf-8");
+        String id = request.getParameter("id");
+        JSONObject myJSON = new JSONObject();
+        PrintWriter writer = response.getWriter();
+        if (id == null) {
+            myJSON.put("status", "400");
+            writer.write(myJSON.toJSONString());
+            writer.flush();
+            return;
+        }
+        List<User> list=userDao.queryFriendList(id);
+        JSONArray array=new JSONArray();
+        if(list==null){
+            myJSON.put("data",array);
+            myJSON.put("status","200");
+            writer.write(myJSON.toJSONString());
+            writer.flush();
+            return;
+        }
+        for(User u:list){
+            JSONObject jsonObject= JSON.parseObject(JSON.toJSONString(u));
+            array.add(jsonObject.toJSONString());
+        }
+        myJSON.put("data",array);
+        myJSON.put("status","200");
+        writer.write(myJSON.toJSONString());
+        writer.flush();
 
     }
     private void sendBadRequest(MyJSON myJSON,PrintWriter writer){

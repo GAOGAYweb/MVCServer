@@ -33,6 +33,13 @@ public class MomentsDAO {
         this.getSession().save(m);
     }
 
+    public List<Moments> findMomengsByOwner(String id){
+        String hql="from Moments m where m.ownerId="+id+" order by m.time desc ";
+        Query query=getSession().createQuery(hql);
+        List<Moments> list=query.list();
+        return list;
+    }
+    public void update(Moments m){getSession().saveOrUpdate(m);}
     public Moments findMomentsById(String id){
         String hql = "from Moments m where m.id=?";
         Query query = getSession().createQuery(hql);// 本地SQL检索方式

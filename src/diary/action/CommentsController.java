@@ -69,7 +69,7 @@ public class CommentsController {
         JSONArray array=new JSONArray();
         for(Comments c:list){
             JSONObject json=JSON.parseObject(JSON.toJSONString(c));
-            array.add(json);
+            array.add(json.toJSONString());
         }
         myJSON.put("data",array);
         myJSON.put("status","200");

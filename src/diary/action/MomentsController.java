@@ -51,7 +51,7 @@ public class MomentsController {
             String dateStr = sdf.format(m.getTime());
             jsonObject.put("time",dateStr);
             System.out.println(jsonObject.toJSONString());
-            array.add(jsonObject);
+            array.add(jsonObject.toJSONString());
         }
         myJSON.put("status","200");
         myJSON.put("data",array);
@@ -75,12 +75,43 @@ public class MomentsController {
             return;
         }
         List<Moments> list=momentsDAO.listFriendsMoments(Integer.parseInt(count), Integer.parseInt(userid));
+        JSONArray array=new JSONArray();
         if (list==null) {
-            myJSON.put("status","400");
+            myJSON.put("status","200");
+            myJSON.put("data",array);
             writer.println(myJSON.toJSONString());
             writer.flush();
             return;
         }
+
+        for(Moments m:list){
+            JSONObject jsonObject= JSON.parseObject(JSON.toJSONString(m));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String dateStr = sdf.format(m.getTime());
+            jsonObject.put("time",dateStr);
+            System.out.println(jsonObject.toJSONString());
+            array.add(jsonObject.toJSONString());
+        }
+        myJSON.put("status","200");
+        myJSON.put("data",array);
+        writer.println(myJSON.toJSONString());
+        writer.flush();
+    }
+    @RequestMapping(params = "method=listOwner",method = RequestMethod.POST)
+    public void listOwner(HttpServletResponse response,HttpServletRequest request)throws  IOException{
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json;charset=utf-8");
+        response.setCharacterEncoding("utf-8");
+        String id = request.getParameter("id");
+        JSONObject myJSON = new JSONObject();
+        PrintWriter writer=response.getWriter();
+        if(id==null){
+            myJSON.put("status","400");
+            writer.write(myJSON.toJSONString());
+            writer.flush();
+            return;
+        }
+        List<Moments> list=momentsDAO.findMomengsByOwner(id);
         JSONArray array=new JSONArray();
         for(Moments m:list){
             JSONObject jsonObject= JSON.parseObject(JSON.toJSONString(m));
@@ -88,14 +119,13 @@ public class MomentsController {
             String dateStr = sdf.format(m.getTime());
             jsonObject.put("time",dateStr);
             System.out.println(jsonObject.toJSONString());
-            array.add(jsonObject);
+            array.add(jsonObject.toJSONString());
         }
-        myJSON.put("status","200");
         myJSON.put("data",array);
-        writer.println(myJSON.toJSONString());
+        myJSON.put("status","200");
+        writer.write(myJSON.toJSONString());
         writer.flush();
     }
-
     @RequestMapping(params = "method=query",method= RequestMethod.POST)
     public void query(HttpServletRequest request,HttpServletResponse response)throws IOException {
         request.setCharacterEncoding("UTF-8");
@@ -115,7 +145,7 @@ public class MomentsController {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String dateStr = sdf.format(m.getTime());
         json.put("time",dateStr);
-        myJSON.put("data",json);
+        myJSON.put("data",json.toJSONString());
         myJSON.put("status","200");
         writer.write(myJSON.toJSONString());
         writer.flush();
@@ -151,6 +181,37 @@ public class MomentsController {
         myJSON.put("status",200);
         writer.write(myJSON.toJSONString());
         writer.flush();
+    }
+    @RequestMapping(params = "method=like",method = RequestMethod.POST)
+    public void like(HttpServletRequest request,HttpServletResponse response)throws IOException{
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json;charset=utf-8");
+        response.setCharacterEncoding("utf-8");
+        String momentid = request.getParameter("momentid");
+        String userid = request.getParameter("userid");
+        JSONObject myJSON = new JSONObject();
+        PrintWriter writer = response.getWriter();
+        if(momentid==null||userid==null){
+            myJSON.put("status","400");
+            writer.write(myJSON.toJSONString());
+            writer.flush();
+            return;
+        }
+        Moments m=momentsDAO.findMomentsById(momentid);
+        String likes=m.getLikes();
+        int count=m.getLikeCount();
+        m.setLikeCount(count+1);
+        if(likes==null){
+            m.setLikes(""+userid);
+        }else{
+            m.setLikes(likes+","+userid);
+        }
+        momentsDAO.update(m);
+        myJSON.put("status","200");
+        writer.write(myJSON.toJSONString());
+        writer.flush();
+
+
     }
 
 }
