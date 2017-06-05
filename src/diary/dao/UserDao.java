@@ -17,7 +17,7 @@ public class UserDao{
     public void addUser(User user) {
         this.getSession().save(user);
     }
-
+    public void updateUser(User user){this.getSession().saveOrUpdate(user);}
     public SessionFactory getSessionFactory() throws HibernateException {
         return sessionFactory;
     }
@@ -25,6 +25,7 @@ public class UserDao{
     private Session getSession() {
         return sessionFactory.getCurrentSession();
     }
+
 
     public User findUserByAccount(String account) {
         String hql = "from User u where u.account=?";

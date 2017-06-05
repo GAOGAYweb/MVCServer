@@ -5,8 +5,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import diary.bean.Moments;
 import diary.dao.MomentsDAO;
-import diary.util.Encoder;
-import diary.util.MyJSON;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,8 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -145,6 +143,11 @@ public class MomentsController {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String dateStr = sdf.format(m.getTime());
         json.put("time",dateStr);
+        String[] likes={};
+        if(m.getLikes()!=null){
+            likes=momentsDAO.queryAllLikes(m.getLikes());
+        }
+        json.put("likes",likes);
         myJSON.put("data",json.toJSONString());
         myJSON.put("status","200");
         writer.write(myJSON.toJSONString());
@@ -200,12 +203,29 @@ public class MomentsController {
         Moments m=momentsDAO.findMomentsById(momentid);
         String likes=m.getLikes();
         int count=m.getLikeCount();
-        m.setLikeCount(count+1);
+        int change=1;
         if(likes==null){
             m.setLikes(""+userid);
         }else{
-            m.setLikes(likes+","+userid);
+            ArrayList<String> list=new ArrayList<String>();
+            String[] allLikes=likes.split(",");
+            for(String s:allLikes){
+                list.add(s);
+            }
+            if(list.contains(userid)){
+                list.remove(userid);
+                change=-1;
+                String result="";
+                for(String s:list){
+                    result+=",";
+                    result+=s;
+                }
+                m.setLikes(result.substring(1,result.length()));
+            }else{
+                m.setLikes(likes+","+userid);
+            }
         }
+        m.setLikeCount(count+change);
         momentsDAO.update(m);
         myJSON.put("status","200");
         writer.write(myJSON.toJSONString());

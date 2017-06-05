@@ -32,7 +32,22 @@ public class MomentsDAO {
     public void addMoments(Moments m) {
         this.getSession().save(m);
     }
-
+    public String[] queryAllLikes(String likes){
+        String[] allLikes= likes.split(",");
+        String hql="from User u where";
+        String temp="";
+        for(String s : allLikes){
+            temp+=(" or id="+s);
+        }
+        hql+=temp.substring(3,temp.length());
+        Query query=getSession().createQuery(hql);
+        List<User> list=query.list();
+        String[] result=new String[list.size()];
+        for(int i=0;i<list.size();i++){
+            result[i]=list.get(i).getNickName();
+        }
+        return result;
+    }
     public List<Moments> findMomengsByOwner(String id){
         String hql="from Moments m where m.ownerId="+id+" order by m.time desc ";
         Query query=getSession().createQuery(hql);

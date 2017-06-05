@@ -68,10 +68,11 @@ public class UserController {
 
         String account = request.getParameter("account");
         String password =  request.getParameter("password");
-        String name = request.getParameter("name");
+        String gender = request.getParameter("gender");
+
         MyJSON myJSON = new MyJSON();
         PrintWriter writer = response.getWriter();
-        if(account == null || password == null){
+        if(account == null || password == null||gender==null){
             this.sendBadRequest(myJSON,writer);
             return;
         }
@@ -79,6 +80,8 @@ public class UserController {
         if (user == null) {
             user = new User();
             user.setAccount(account);
+            user.setNickName(account);
+            user.setGender(Integer.valueOf(gender));
             System.out.println(Encoder.EncoderByMd5(password));
             user.setPassword(Encoder.EncoderByMd5(password));
             request.getSession().setAttribute("user", user);
@@ -123,6 +126,34 @@ public class UserController {
 
 
     }
+    @RequestMapping (params = "method=update",method=RequestMethod.POST)
+    public void update(HttpServletRequest request,HttpServletResponse response)throws IOException{
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json;charset=utf-8");
+        response.setCharacterEncoding("utf-8");
+        String id = request.getParameter("id");
+        String nickName=request.getParameter("nickname");
+        String description=request.getParameter("description");
+        String gender=request.getParameter("gender");
+        JSONObject myJSON = new JSONObject();
+        PrintWriter writer = response.getWriter();
+        if (id == null||userDao.findUserById(id)==null) {
+            myJSON.put("status", "400");
+            writer.write(myJSON.toJSONString());
+            writer.flush();
+            return;
+        }
+        User user=userDao.findUserById(id);
+        if(nickName!=null)user.setNickName(nickName);
+        if(description!=null)user.setDescription(description);
+        if(gender!=null)user.setGender(Integer.valueOf(gender));
+        userDao.updateUser(user);
+        myJSON.put("status","200");
+        writer.write(myJSON.toJSONString());
+        writer.flush();
+
+    }
+
     @RequestMapping(params = "method=friendList",method = RequestMethod.POST)
     public void friendList(HttpServletResponse response,HttpServletRequest request)throws IOException{
         request.setCharacterEncoding("UTF-8");
