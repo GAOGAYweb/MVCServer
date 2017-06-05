@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import diary.bean.Moments;
+import diary.bean.User;
 import diary.dao.MomentsDAO;
+import diary.dao.UserDao;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,6 +27,9 @@ import java.util.List;
 @RequestMapping(value="moments")
 public class MomentsController {
     private MomentsDAO momentsDAO;
+    private UserDao userDao;
+    @Resource
+    private void setUserDao(UserDao userDao){this.userDao=userDao;}
     @Resource
     private void setMomentsDAO(MomentsDAO momentsDAO){this.momentsDAO=momentsDAO;}
     @RequestMapping(params = "method=listNew", method = RequestMethod.POST)
@@ -45,6 +50,16 @@ public class MomentsController {
         JSONArray array=new JSONArray();
         for(Moments m:list){
             JSONObject jsonObject= JSON.parseObject(JSON.toJSONString(m));
+            User u=userDao.findUserById(String.valueOf(m.getOwnerId()));
+            jsonObject.put("account",u.getNickName());
+            jsonObject.put("avatar",u.getImageSrc());
+            String[] likes={};
+            if(m.getLikes()!=null) {
+                likes = momentsDAO.queryAllLikes(m.getLikes());
+            }
+            jsonObject.put("likes",likes);
+            String[] tags=m.getTag().split(",");
+            jsonObject.put("tag",tags);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String dateStr = sdf.format(m.getTime());
             jsonObject.put("time",dateStr);
@@ -84,6 +99,16 @@ public class MomentsController {
 
         for(Moments m:list){
             JSONObject jsonObject= JSON.parseObject(JSON.toJSONString(m));
+            User u=userDao.findUserById(String.valueOf(m.getOwnerId()));
+            jsonObject.put("account",u.getNickName());
+            jsonObject.put("avatar",u.getImageSrc());
+            String[] likes={};
+            if(m.getLikes()!=null) {
+                likes = momentsDAO.queryAllLikes(m.getLikes());
+            }
+            jsonObject.put("likes",likes);
+            String[] tags=m.getTag().split(",");
+            jsonObject.put("tag",tags);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String dateStr = sdf.format(m.getTime());
             jsonObject.put("time",dateStr);
@@ -116,6 +141,16 @@ public class MomentsController {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String dateStr = sdf.format(m.getTime());
             jsonObject.put("time",dateStr);
+            User u=userDao.findUserById(String.valueOf(m.getOwnerId()));
+            jsonObject.put("account",u.getNickName());
+            jsonObject.put("avatar",u.getImageSrc());
+            String[] likes={};
+            if(m.getLikes()!=null) {
+                likes = momentsDAO.queryAllLikes(m.getLikes());
+            }
+            jsonObject.put("likes",likes);
+            String[] tags=m.getTag().split(",");
+            jsonObject.put("tag",tags);
             System.out.println(jsonObject.toJSONString());
             array.add(jsonObject.toJSONString());
         }
@@ -139,15 +174,20 @@ public class MomentsController {
             return;
         }
         Moments m = momentsDAO.findMomentsById(id);
+        User u=userDao.findUserById(String.valueOf(m.getOwnerId()));
         JSONObject json=new JSONObject(JSON.parseObject(JSON.toJSONString(m)));
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String dateStr = sdf.format(m.getTime());
+        json.put("account",u.getNickName());
+        json.put("avatar",u.getImageSrc());
         json.put("time",dateStr);
         String[] likes={};
-        if(m.getLikes()!=null){
-            likes=momentsDAO.queryAllLikes(m.getLikes());
+        if(m.getLikes()!=null) {
+            likes = momentsDAO.queryAllLikes(m.getLikes());
         }
         json.put("likes",likes);
+        String[] tags=m.getTag().split(",");
+        json.put("tag",tags);
         myJSON.put("data",json.toJSONString());
         myJSON.put("status","200");
         writer.write(myJSON.toJSONString());
