@@ -23,7 +23,7 @@ public class CommentsDAO {
     public void add(Comments c){this.getSession().save(c);}
 
     public List<Comments> queryComments(String id){
-        String hql="from Comments c where c.momentId="+id+" order by c.id";
+        String hql="from Comments c where c.momentId="+id+" order by c.time";
         Query query=getSession().createQuery(hql);
         List<Comments> list=query.list();
         return list;
