@@ -214,6 +214,7 @@ public class MomentsController {
         String longitude=request.getParameter("longitude");
         String latitude=request.getParameter("latitude");
         String image=request.getParameter("image");
+        String streetName=request.getParameter("streetName");
         JSONObject myJSON = new JSONObject();
         PrintWriter writer = response.getWriter();
         if(id==null||content==null){
@@ -229,6 +230,11 @@ public class MomentsController {
         m.setLongitude(Double.parseDouble(longitude));
         if(latitude!=null)
         m.setLatitude(Double.parseDouble(latitude));
+        if(streetName!=null){
+            m.setStreetName(streetName);
+        }else{
+            m.setStreetName("空");
+        }
         m.setLikeCount(0);
         m.setLikes("0");
         if(image!=null){

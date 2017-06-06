@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * Created by Sunine on 2017/6/5.
+ * Created by Sunine on 2017/6/6.
  */
 @Entity
 @Table(name="moments")
@@ -19,6 +19,7 @@ public class Moments {
     private Date time;
     private String imageSrc;
     private String tag;
+    private String streetName;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -120,6 +121,16 @@ public class Moments {
         this.tag = tag;
     }
 
+    @Basic
+    @Column(name = "streetName", nullable = false, length = 100)
+    public String getStreetName() {
+        return streetName;
+    }
+
+    public void setStreetName(String streetName) {
+        this.streetName = streetName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -137,6 +148,7 @@ public class Moments {
         if (time != null ? !time.equals(moments.time) : moments.time != null) return false;
         if (imageSrc != null ? !imageSrc.equals(moments.imageSrc) : moments.imageSrc != null) return false;
         if (tag != null ? !tag.equals(moments.tag) : moments.tag != null) return false;
+        if (streetName != null ? !streetName.equals(moments.streetName) : moments.streetName != null) return false;
 
         return true;
     }
@@ -157,6 +169,7 @@ public class Moments {
         result = 31 * result + (time != null ? time.hashCode() : 0);
         result = 31 * result + (imageSrc != null ? imageSrc.hashCode() : 0);
         result = 31 * result + (tag != null ? tag.hashCode() : 0);
+        result = 31 * result + (streetName != null ? streetName.hashCode() : 0);
         return result;
     }
 }
