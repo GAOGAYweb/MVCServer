@@ -54,7 +54,7 @@ public class MomentsController {
             jsonObject.put("account",u.getNickName());
             jsonObject.put("avatar",u.getImageSrc());
             String[] likes={};
-            if(m.getLikes()!=null) {
+            if(!m.getLikes().equals("0")) {
                 likes = momentsDAO.queryAllLikes(m.getLikes());
             }
             jsonObject.put("likes",likes);
@@ -103,7 +103,7 @@ public class MomentsController {
             jsonObject.put("account",u.getNickName());
             jsonObject.put("avatar",u.getImageSrc());
             String[] likes={};
-            if(m.getLikes()!=null) {
+            if(!m.getLikes().equals("0")) {
                 likes = momentsDAO.queryAllLikes(m.getLikes());
             }
             jsonObject.put("likes",likes);
@@ -145,7 +145,7 @@ public class MomentsController {
             jsonObject.put("account",u.getNickName());
             jsonObject.put("avatar",u.getImageSrc());
             String[] likes={};
-            if(m.getLikes()!=null) {
+            if(!m.getLikes().equals("0")) {
                 likes = momentsDAO.queryAllLikes(m.getLikes());
             }
             jsonObject.put("likes",likes);
@@ -182,7 +182,7 @@ public class MomentsController {
         json.put("avatar",u.getImageSrc());
         json.put("time",dateStr);
         String[] likes={};
-        if(m.getLikes()!=null) {
+        if(!m.getLikes().equals("0")) {
             likes = momentsDAO.queryAllLikes(m.getLikes());
         }
         json.put("likes",likes);
@@ -206,7 +206,7 @@ public class MomentsController {
         String image=request.getParameter("image");
         JSONObject myJSON = new JSONObject();
         PrintWriter writer = response.getWriter();
-        if(id==null||content==null||longitude==null||latitude==null||image==null){
+        if(id==null||content==null||image==null){
             myJSON.put("status","400");
             writer.write(myJSON.toJSONString());
             writer.flush();
@@ -215,10 +215,12 @@ public class MomentsController {
         Moments m=new Moments();
         m.setOwnerId(Long.parseLong(id));
         m.setContent(content);
+        if(longitude!=null)
         m.setLongitude(Double.parseDouble(longitude));
+        if(latitude!=null)
         m.setLatitude(Double.parseDouble(latitude));
         m.setLikeCount(0);
-        m.setLikes("");
+        m.setLikes("0");
         m.setImageSrc(image);
         momentsDAO.addMoments(m);
         myJSON.put("status",200);
@@ -244,7 +246,7 @@ public class MomentsController {
         String likes=m.getLikes();
         int count=m.getLikeCount();
         int change=1;
-        if(likes==null){
+        if(likes.equals("0")){
             m.setLikes(""+userid);
         }else{
             ArrayList<String> list=new ArrayList<String>();
@@ -255,12 +257,17 @@ public class MomentsController {
             if(list.contains(userid)){
                 list.remove(userid);
                 change=-1;
-                String result="";
-                for(String s:list){
-                    result+=",";
-                    result+=s;
+                if(list.size()==0){
+                    m.setLikes("0");
+                }else{
+                    String result="";
+                    for(String s:list){
+                        result+=",";
+                        result+=s;
+                    }
+                    m.setLikes(result.substring(1,result.length()));
                 }
-                m.setLikes(result.substring(1,result.length()));
+
             }else{
                 m.setLikes(likes+","+userid);
             }
