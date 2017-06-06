@@ -28,5 +28,11 @@ public class CommentsDAO {
         List<Comments> list=query.list();
         return list;
     }
+    public long getCommentsSize(String id){
+        String hql="select count(*) from Comments c where c.momentId="+id;
+        Query query=getSession().createQuery(hql);
+        long size= (long) query.uniqueResult();
+        return size;
+    }
 
 }

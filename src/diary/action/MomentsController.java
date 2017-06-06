@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import diary.bean.Moments;
 import diary.bean.User;
+import diary.dao.CommentsDAO;
 import diary.dao.MomentsDAO;
 import diary.dao.UserDao;
 import org.springframework.stereotype.Controller;
@@ -29,6 +30,9 @@ import java.util.List;
 public class MomentsController {
     private MomentsDAO momentsDAO;
     private UserDao userDao;
+    private CommentsDAO commentsDAO;
+    @Resource
+    private  void setCommentsDAO(CommentsDAO commentsDAO){this.commentsDAO=commentsDAO;}
     @Resource
     private void setUserDao(UserDao userDao){this.userDao=userDao;}
     @Resource
@@ -64,6 +68,7 @@ public class MomentsController {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String dateStr = sdf.format(m.getTime());
             jsonObject.put("time",dateStr);
+            jsonObject.put("commentSize",commentsDAO.getCommentsSize(String.valueOf(m.getId())));
             System.out.println(jsonObject.toJSONString());
             array.add(jsonObject.toJSONString());
         }
@@ -113,6 +118,7 @@ public class MomentsController {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String dateStr = sdf.format(m.getTime());
             jsonObject.put("time",dateStr);
+            jsonObject.put("commentSize",commentsDAO.getCommentsSize(String.valueOf(m.getId())));
             System.out.println(jsonObject.toJSONString());
             array.add(jsonObject.toJSONString());
         }
@@ -152,6 +158,7 @@ public class MomentsController {
             jsonObject.put("likes",likes);
             String[] tags=m.getTag().split(",");
             jsonObject.put("tag",tags);
+            jsonObject.put("commentSize",commentsDAO.getCommentsSize(String.valueOf(m.getId())));
             System.out.println(jsonObject.toJSONString());
             array.add(jsonObject.toJSONString());
         }
@@ -189,7 +196,9 @@ public class MomentsController {
         json.put("likes",likes);
         String[] tags=m.getTag().split(",");
         json.put("tag",tags);
+        json.put("commentSize",commentsDAO.getCommentsSize(String.valueOf(m.getId())));
         myJSON.put("data",json.toJSONString());
+
         myJSON.put("status","200");
         writer.write(myJSON.toJSONString());
         writer.flush();
