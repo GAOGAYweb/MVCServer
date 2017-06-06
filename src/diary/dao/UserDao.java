@@ -52,6 +52,7 @@ public class UserDao{
         String hql="from User u where u.id="+userid;
         Query query=getSession().createQuery(hql);
         User u= (User) query.uniqueResult();
+        if(u.getFriends()==null)return null;
         String[] friends=u.getFriends().split(",");
         if(friends.length==0)return null;
         String hql2="from User u where";

@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -206,7 +207,7 @@ public class MomentsController {
         String image=request.getParameter("image");
         JSONObject myJSON = new JSONObject();
         PrintWriter writer = response.getWriter();
-        if(id==null||content==null||image==null){
+        if(id==null||content==null){
             myJSON.put("status","400");
             writer.write(myJSON.toJSONString());
             writer.flush();
@@ -221,7 +222,13 @@ public class MomentsController {
         m.setLatitude(Double.parseDouble(latitude));
         m.setLikeCount(0);
         m.setLikes("0");
-        m.setImageSrc(image);
+        if(image!=null){
+            m.setImageSrc(image);
+        }else{
+            m.setImageSrc("moment_default.jpg");
+        }
+        m.setTag("朋友圈");
+        m.setTime(new Date());
         momentsDAO.addMoments(m);
         myJSON.put("status",200);
         writer.write(myJSON.toJSONString());

@@ -37,7 +37,7 @@ public class Comments {
     }
 
     @Basic
-    @Column(name = "content", nullable = true, length = 200)
+    @Column(name = "content", nullable = false, length = 200)
     public String getContent() {
         return content;
     }
@@ -57,7 +57,7 @@ public class Comments {
     }
 
     @Basic
-    @Column(name = "avatar", nullable = true, length = 100)
+    @Column(name = "avatar", nullable = false, length = 100)
     public String getAvatar() {
         return avatar;
     }
@@ -67,7 +67,7 @@ public class Comments {
     }
 
     @Basic
-    @Column(name = "time", nullable = true)
+    @Column(name = "time", nullable = false)
     public Date getTime() {
         return time;
     }

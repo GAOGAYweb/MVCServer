@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -53,6 +54,8 @@ public class CommentsController {
         c.setMomentId(Integer.parseInt(id));
         c.setNickname(u.getNickName());
         c.setAvatar(u.getImageSrc());
+        c.setTime(new Date());
+
         commentsDAO.add(c);
         myJSON.put("status","200");
         writer.write(myJSON.toJSONString());
@@ -75,13 +78,16 @@ public class CommentsController {
         }
         List<Comments> list=commentsDAO.queryComments(id);
         JSONArray array=new JSONArray();
-        for(Comments c:list){
-            JSONObject json=JSON.parseObject(JSON.toJSONString(c));
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String dateStr = sdf.format(c.getTime());
-            json.put("time",dateStr);
-            array.add(json.toJSONString());
+        if(list!=null){
+            for(Comments c:list){
+                JSONObject json=JSON.parseObject(JSON.toJSONString(c));
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String dateStr = sdf.format(c.getTime());
+                json.put("time",dateStr);
+                array.add(json.toJSONString());
+            }
         }
+
         myJSON.put("data",array);
         myJSON.put("status","200");
         writer.write(myJSON.toJSONString());

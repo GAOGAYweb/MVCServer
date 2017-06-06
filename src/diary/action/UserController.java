@@ -82,6 +82,8 @@ public class UserController {
             user.setAccount(account);
             user.setNickName(account);
             user.setGender(Integer.valueOf(gender));
+            user.setDescription("This guy is shy and nothing was written...");
+            user.setImageSrc("default.jpg");
             System.out.println(Encoder.EncoderByMd5(password));
             user.setPassword(Encoder.EncoderByMd5(password));
             request.getSession().setAttribute("user", user);
