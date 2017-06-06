@@ -1,14 +1,12 @@
 package diary.bean;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 /**
  * Created by Sunine on 2017/6/6.
  */
 @Entity
+@Table(name="comments")
 public class Comments {
     private int id;
     private String nickname;
