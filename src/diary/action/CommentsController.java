@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -76,6 +77,9 @@ public class CommentsController {
         JSONArray array=new JSONArray();
         for(Comments c:list){
             JSONObject json=JSON.parseObject(JSON.toJSONString(c));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String dateStr = sdf.format(c.getTime());
+            json.put("time",dateStr);
             array.add(json.toJSONString());
         }
         myJSON.put("data",array);
