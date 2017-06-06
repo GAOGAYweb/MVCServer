@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import diary.bean.Comments;
+import diary.bean.User;
 import diary.dao.CommentsDAO;
+import diary.dao.UserDao;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,6 +25,9 @@ import java.util.List;
 @RequestMapping("/comments")
 public class CommentsController {
     private CommentsDAO commentsDAO;
+    private UserDao userDao;
+    @Resource
+    public void setUserDao(UserDao userDao){this.userDao=userDao;}
     @Resource
     public void setCommentsDAO(CommentsDAO commentsDAO){this.commentsDAO=commentsDAO;}
     @RequestMapping(params = "method=add",method = RequestMethod.POST)
@@ -31,20 +36,22 @@ public class CommentsController {
         response.setContentType("application/json;charset=utf-8");
         response.setCharacterEncoding("utf-8");
         String id = request.getParameter("id");
-        String nickname=request.getParameter("nickname");
+        String userid=request.getParameter("userid");
         String content=request.getParameter("content");
         JSONObject myJSON = new JSONObject();
         PrintWriter writer = response.getWriter();
-        if(id==null||nickname==null||content==null){
+        if(id==null||content==null||userid==null){
             myJSON.put("status","400");
             writer.write(myJSON.toJSONString());
             writer.flush();
             return;
         }
         Comments c=new Comments();
+        User u=userDao.findUserById(userid);
         c.setContent(content);
         c.setMomentId(Integer.parseInt(id));
-        c.setNickname(nickname);
+        c.setNickname(u.getNickName());
+        c.setAvatar(u.getImageSrc());
         commentsDAO.add(c);
         myJSON.put("status","200");
         writer.write(myJSON.toJSONString());

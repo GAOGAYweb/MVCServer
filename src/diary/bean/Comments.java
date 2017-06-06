@@ -1,17 +1,20 @@
 package diary.bean;
 
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
 /**
- * Created by Sunine on 2017/6/4.
+ * Created by Sunine on 2017/6/6.
  */
 @Entity
-@Table(name="comments")
 public class Comments {
     private int id;
     private String nickname;
     private String content;
     private Integer momentId;
+    private String avatar;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -53,6 +56,16 @@ public class Comments {
         this.momentId = momentId;
     }
 
+    @Basic
+    @Column(name = "avatar", nullable = true, length = 100)
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -64,6 +77,7 @@ public class Comments {
         if (nickname != null ? !nickname.equals(comments.nickname) : comments.nickname != null) return false;
         if (content != null ? !content.equals(comments.content) : comments.content != null) return false;
         if (momentId != null ? !momentId.equals(comments.momentId) : comments.momentId != null) return false;
+        if (avatar != null ? !avatar.equals(comments.avatar) : comments.avatar != null) return false;
 
         return true;
     }
@@ -74,6 +88,7 @@ public class Comments {
         result = 31 * result + (nickname != null ? nickname.hashCode() : 0);
         result = 31 * result + (content != null ? content.hashCode() : 0);
         result = 31 * result + (momentId != null ? momentId.hashCode() : 0);
+        result = 31 * result + (avatar != null ? avatar.hashCode() : 0);
         return result;
     }
 }
