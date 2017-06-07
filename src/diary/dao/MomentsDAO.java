@@ -28,7 +28,7 @@ public class MomentsDAO {
     private Session getSession() {
         return sessionFactory.getCurrentSession();
     }
-
+    public void updateMoments(Moments m){this.getSession().saveOrUpdate(m);}
     public void addMoments(Moments m) {
         this.getSession().save(m);
     }

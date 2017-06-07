@@ -167,6 +167,10 @@ public class MomentsController {
         writer.write(myJSON.toJSONString());
         writer.flush();
     }
+    @RequestMapping(params = "method=listAdvice",method = RequestMethod.POST)
+    public void listAdvice(HttpServletResponse response,HttpServletRequest request){
+
+    }
     @RequestMapping(params = "method=query",method= RequestMethod.POST)
     public void query(HttpServletRequest request,HttpServletResponse response)throws IOException {
         request.setCharacterEncoding("UTF-8");

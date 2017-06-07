@@ -18,6 +18,7 @@
         <mapping class="diary.bean.User"></mapping>
         <mapping class="diary.bean.Moments"></mapping>
         <mapping class="diary.bean.Comments"></mapping>
+        <mapping class="diary.bean.Message"></mapping>
 
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hbm2ddl.auto">update</property> -->
