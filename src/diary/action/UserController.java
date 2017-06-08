@@ -137,6 +137,7 @@ public class UserController {
         String nickName=request.getParameter("nickname");
         String description=request.getParameter("description");
         String gender=request.getParameter("gender");
+        String image=request.getParameter("imageSrc");
         JSONObject myJSON = new JSONObject();
         PrintWriter writer = response.getWriter();
         if (id == null||userDao.findUserById(id)==null) {
@@ -149,6 +150,7 @@ public class UserController {
         if(nickName!=null)user.setNickName(nickName);
         if(description!=null)user.setDescription(description);
         if(gender!=null)user.setGender(Integer.valueOf(gender));
+        if(image!=null)user.setImageSrc(image);
         userDao.updateUser(user);
         myJSON.put("status","200");
         writer.write(myJSON.toJSONString());
