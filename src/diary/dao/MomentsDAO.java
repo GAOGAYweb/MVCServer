@@ -105,9 +105,14 @@ public class MomentsDAO {
     }
 
     public List<Moments> queryMomentsAdvice(String id) {
-        String hql = "from Moments m where m.ownerId!='"+id+"' order by likeCount desc,time desc";
+        String hql="from Moments m where m.ownerId='"+id+"' order by time desc ";
         Query query=getSession().createQuery(hql);
-        query.setMaxResults(3);
-        return query.list();
+        query.setMaxResults(1);
+        Moments m= (Moments) query.list().get(0);
+        System.out.println(m.getId());
+        String hql2 = "from Moments m where m.ownerId!='"+id+"' order by ABS("+m.getEmotion()+"-m.emotion) ,likeCount desc,time desc";
+        Query query2=getSession().createQuery(hql2);
+        query2.setMaxResults(5);
+        return query2.list();
     }
 }
