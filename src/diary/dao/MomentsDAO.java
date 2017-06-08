@@ -28,71 +28,84 @@ public class MomentsDAO {
     private Session getSession() {
         return sessionFactory.getCurrentSession();
     }
-    public void updateMoments(Moments m){this.getSession().saveOrUpdate(m);}
+
+    public void updateMoments(Moments m) {
+        this.getSession().saveOrUpdate(m);
+    }
+
     public void addMoments(Moments m) {
         this.getSession().save(m);
     }
-    public String[] queryAllLikes(String likes){
-        String[] allLikes= likes.split(",");
-        String hql="from User u where";
-        String temp="";
-        for(String s : allLikes){
-            temp+=(" or id="+s);
+
+    public String[] queryAllLikes(String likes) {
+        String[] allLikes = likes.split(",");
+        String hql = "from User u where";
+        String temp = "";
+        for (String s : allLikes) {
+            temp += (" or id=" + s);
         }
-        hql+=temp.substring(3,temp.length());
-        Query query=getSession().createQuery(hql);
-        List<User> list=query.list();
-        String[] result=new String[list.size()];
-        for(int i=0;i<list.size();i++){
-            result[i]=list.get(i).getNickName();
+        hql += temp.substring(3, temp.length());
+        Query query = getSession().createQuery(hql);
+        List<User> list = query.list();
+        String[] result = new String[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            result[i] = list.get(i).getNickName();
         }
         return result;
     }
-    public List<Moments> findMomengsByOwner(String id){
-        String hql="from Moments m where m.ownerId="+id+" order by m.time desc ";
-        Query query=getSession().createQuery(hql);
-        List<Moments> list=query.list();
+
+    public List<Moments> findMomengsByOwner(String id) {
+        String hql = "from Moments m where m.ownerId=" + id + " order by m.time desc ";
+        Query query = getSession().createQuery(hql);
+        List<Moments> list = query.list();
         return list;
     }
-    public void update(Moments m){getSession().saveOrUpdate(m);}
-    public Moments findMomentsById(String id){
+
+    public void update(Moments m) {
+        getSession().saveOrUpdate(m);
+    }
+
+    public Moments findMomentsById(String id) {
         String hql = "from Moments m where m.id=?";
         Query query = getSession().createQuery(hql);// 本地SQL检索方式
         query.setInteger(0, Integer.parseInt(id));
-        return (Moments)query.uniqueResult();
+        return (Moments) query.uniqueResult();
     }
+
     public List<Moments> listNewestMoments(int count) {
         String hql = "from Moments m order by time desc";
         Query query = getSession().createQuery(hql);
-        query.setFirstResult(0+count*10);
-        query.setMaxResults(10+count*10);
-        List<Moments> list=query.list();
+        query.setFirstResult(0 + count * 10);
+        query.setMaxResults(10 + count * 10);
+        List<Moments> list = query.list();
         return list;
     }
-    public List<Moments> listFriendsMoments(int count,int userid){
-        String hql="from User u where u.id="+userid;
-        Query query=getSession().createQuery(hql);
-        User u= (User) query.uniqueResult();
-        String[] friends=u.getFriends().split(",");
-        if(friends.length==0)return null;
-        String hql2="from Moments m where";
-        String temp="";
-        for(String s : friends){
-            temp+=(" or owner_id="+s);
+
+    public List<Moments> listFriendsMoments(int count, int userid) {
+        String hql = "from User u where u.id=" + userid;
+        Query query = getSession().createQuery(hql);
+        User u = (User) query.uniqueResult();
+        String[] friends = u.getFriends().split(",");
+        if (friends.length == 0) return null;
+        String hql2 = "from Moments m where";
+        String temp = "";
+        for (String s : friends) {
+            temp += (" or owner_id=" + s);
         }
-        hql2+=temp.substring(3,temp.length());
-        hql2+=" order by time desc";
+        hql2 += temp.substring(3, temp.length());
+        hql2 += " order by time desc";
         System.out.println(hql2);
-        Query query2=getSession().createQuery(hql2);
-        query2.setFirstResult(0+count*10);
-        query2.setMaxResults(10+count*10);
-        List<Moments> list=query2.list();
+        Query query2 = getSession().createQuery(hql2);
+        query2.setFirstResult(0 + count * 10);
+        query2.setMaxResults(10 + count * 10);
+        List<Moments> list = query2.list();
         return list;
     }
-    public Moments queryMomentsById(int id){
-        String hql="from Moments m where m.id="+id;
+
+    public List<Moments> queryMomentsAdvice(String id) {
+        String hql = "from Moments m where m.ownerId!='"+id+"' order by likeCount desc,time desc";
         Query query=getSession().createQuery(hql);
-        Moments m= (Moments) query.uniqueResult();
-        return m;
+        query.setMaxResults(3);
+        return query.list();
     }
 }

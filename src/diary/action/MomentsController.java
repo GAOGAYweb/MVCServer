@@ -8,6 +8,8 @@ import diary.bean.User;
 import diary.dao.CommentsDAO;
 import diary.dao.MomentsDAO;
 import diary.dao.UserDao;
+import diary.util.NPLUtil;
+import org.codehaus.jackson.map.deser.StdDeserializer;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,6 +21,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -168,8 +171,44 @@ public class MomentsController {
         writer.flush();
     }
     @RequestMapping(params = "method=listAdvice",method = RequestMethod.POST)
-    public void listAdvice(HttpServletResponse response,HttpServletRequest request){
-
+    public void listAdvice(HttpServletResponse response,HttpServletRequest request)throws IOException{
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json;charset=utf-8");
+        response.setCharacterEncoding("utf-8");
+        String id = request.getParameter("id");
+        JSONObject myJSON = new JSONObject();
+        PrintWriter writer=response.getWriter();
+        if(id==null){
+            myJSON.put("status","400");
+            writer.write(myJSON.toJSONString());
+            writer.flush();
+            return;
+        }
+        List<Moments> list=momentsDAO.queryMomentsAdvice(id);
+        JSONArray array=new JSONArray();
+        for(Moments m:list){
+            JSONObject jsonObject= JSON.parseObject(JSON.toJSONString(m));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String dateStr = sdf.format(m.getTime());
+            jsonObject.put("time",dateStr);
+            User u=userDao.findUserById(String.valueOf(m.getOwnerId()));
+            jsonObject.put("account",u.getNickName());
+            jsonObject.put("avatar",u.getImageSrc());
+            String[] likes={};
+            if(!m.getLikes().equals("0")) {
+                likes = momentsDAO.queryAllLikes(m.getLikes());
+            }
+            jsonObject.put("likes",likes);
+            String[] tags=m.getTag().split(",");
+            jsonObject.put("tag",tags);
+            jsonObject.put("commentSize",commentsDAO.getCommentsSize(String.valueOf(m.getId())));
+            System.out.println(jsonObject.toJSONString());
+            array.add(jsonObject.toJSONString());
+        }
+        myJSON.put("data",array);
+        myJSON.put("status","200");
+        writer.write(myJSON.toJSONString());
+        writer.flush();
     }
     @RequestMapping(params = "method=query",method= RequestMethod.POST)
     public void query(HttpServletRequest request,HttpServletResponse response)throws IOException {
@@ -246,7 +285,19 @@ public class MomentsController {
         }else{
             m.setImageSrc("moment_default.jpg");
         }
-        m.setTag("朋友圈");
+        List<String> data= Arrays.asList(content);
+        List<String> tagList= NPLUtil.keywords(data,0.1).get(0);
+        String tag="";
+        for(String s:tagList){
+            tag+=",";
+            tag+=s;
+        }
+        if(tag.length()==0){
+            m.setTag("朋友圈");
+        }else{
+            m.setTag(tag.substring(1,tag.length()));
+        }
+
         m.setTime(new Date());
         momentsDAO.addMoments(m);
         myJSON.put("status",200);
