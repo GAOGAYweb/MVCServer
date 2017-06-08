@@ -37,6 +37,8 @@ public class MomentsDAO {
         this.getSession().save(m);
     }
 
+    public void deleteMoments(Moments m){this.getSession().delete(m);}
+
     public String[] queryAllLikes(String likes) {
         String[] allLikes = likes.split(",");
         String hql = "from User u where";

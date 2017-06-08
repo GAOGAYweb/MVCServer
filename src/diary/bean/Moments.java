@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * Created by Sunine on 2017/6/6.
+ * Created by Sunine on 2017/6/8.
  */
 @Entity
 @Table(name="moments")
@@ -20,6 +20,7 @@ public class Moments {
     private String imageSrc;
     private String tag;
     private String streetName;
+    private Double emotion;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -131,6 +132,16 @@ public class Moments {
         this.streetName = streetName;
     }
 
+    @Basic
+    @Column(name = "emotion", nullable = true, precision = 0)
+    public Double getEmotion() {
+        return emotion;
+    }
+
+    public void setEmotion(Double emotion) {
+        this.emotion = emotion;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -149,6 +160,7 @@ public class Moments {
         if (imageSrc != null ? !imageSrc.equals(moments.imageSrc) : moments.imageSrc != null) return false;
         if (tag != null ? !tag.equals(moments.tag) : moments.tag != null) return false;
         if (streetName != null ? !streetName.equals(moments.streetName) : moments.streetName != null) return false;
+        if (emotion != null ? !emotion.equals(moments.emotion) : moments.emotion != null) return false;
 
         return true;
     }
@@ -170,6 +182,7 @@ public class Moments {
         result = 31 * result + (imageSrc != null ? imageSrc.hashCode() : 0);
         result = 31 * result + (tag != null ? tag.hashCode() : 0);
         result = 31 * result + (streetName != null ? streetName.hashCode() : 0);
+        result = 31 * result + (emotion != null ? emotion.hashCode() : 0);
         return result;
     }
 }

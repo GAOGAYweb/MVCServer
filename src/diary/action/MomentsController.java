@@ -297,10 +297,31 @@ public class MomentsController {
         }else{
             m.setTag(tag.substring(1,tag.length()));
         }
-
+        double emotion=NPLUtil.sentimentAnalysis(data).get(0).get(0);
+        m.setEmotion(emotion);
         m.setTime(new Date());
         momentsDAO.addMoments(m);
         myJSON.put("status",200);
+        writer.write(myJSON.toJSONString());
+        writer.flush();
+    }
+    @RequestMapping(params = "method=delete",method = RequestMethod.POST)
+    public void delete(HttpServletRequest request,HttpServletResponse response)throws IOException{
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json;charset=utf-8");
+        response.setCharacterEncoding("utf-8");
+        String id = request.getParameter("id");
+        JSONObject myJSON = new JSONObject();
+        PrintWriter writer = response.getWriter();
+        if(id==null){
+            myJSON.put("status","400");
+            writer.write(myJSON.toJSONString());
+            writer.flush();
+            return;
+        }
+        Moments m=momentsDAO.findMomentsById(id);
+        momentsDAO.deleteMoments(m);
+        myJSON.put("status","200");
         writer.write(myJSON.toJSONString());
         writer.flush();
     }
