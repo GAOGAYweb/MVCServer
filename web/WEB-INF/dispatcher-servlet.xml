@@ -50,4 +50,5 @@
     <bean id="MomentsDAO" class="diary.dao.MomentsDAO"></bean>
     <bean id="CommentsDAO" class="diary.dao.CommentsDAO"></bean>
     <bean id="MessageDAO" class="diary.dao.MessageDAO"></bean>
+    <bean id="FriendsDAO" class="diary.dao.FriendsDAO"></bean>
 </beans>

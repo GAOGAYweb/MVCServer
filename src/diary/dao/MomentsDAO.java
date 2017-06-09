@@ -1,5 +1,6 @@
 package diary.dao;
 
+import diary.bean.Friends;
 import diary.bean.Moments;
 import diary.bean.User;
 import org.hibernate.HibernateException;
@@ -8,6 +9,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -48,6 +51,7 @@ public class MomentsDAO {
         }
         hql += temp.substring(3, temp.length());
         Query query = getSession().createQuery(hql);
+        System.out.println(hql);
         List<User> list = query.list();
         String[] result = new String[list.size()];
         for (int i = 0; i < list.size(); i++) {
@@ -84,11 +88,14 @@ public class MomentsDAO {
     }
 
     public List<Moments> listFriendsMoments(int count, int userid) {
-        String hql = "from User u where u.id=" + userid;
+        String hql = "from Friends f where f.ownerId=" + userid;
         Query query = getSession().createQuery(hql);
-        User u = (User) query.uniqueResult();
-        String[] friends = u.getFriends().split(",");
-        if (friends.length == 0) return null;
+        List<Friends> flist=query.list();
+        String[] friends = new String[0];
+        for(Friends f:flist){
+            if(f.getFriends().length()==0)continue;
+            friends=getMergeArray(friends,f.getFriends().split(","));
+        }
         String hql2 = "from Moments m where";
         String temp = "";
         for (String s : friends) {
@@ -114,5 +121,13 @@ public class MomentsDAO {
         Query query2=getSession().createQuery(hql2);
         query2.setMaxResults(5);
         return query2.list();
+    }
+    public String[] getMergeArray(String[] al,String[] bl) {
+        String[] a = al;
+        String[] b = bl;
+        String[] c = new String[a.length + b.length];
+        System.arraycopy(a, 0, c, 0, a.length);
+        System.arraycopy(b, 0, c, a.length, b.length);
+        return c;
     }
 }

@@ -4,7 +4,9 @@ package diary.action;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import diary.bean.Friends;
 import diary.bean.User;
+import diary.dao.FriendsDAO;
 import diary.dao.UserDao;
 import diary.util.Encoder;
 import diary.util.MyJSON;
@@ -19,19 +21,21 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/user")
 public class UserController {
 
     private UserDao userDao;
-
+    private FriendsDAO friendsDAO;
+    @Resource
+    public void  setFriendsDAO(FriendsDAO friendsDAO){this.friendsDAO=friendsDAO;}
     @Resource
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
     }
 
-    //@RequestMapping(params = "method=login", method = RequestMethod.POST)
     @RequestMapping(params = "method=login", method = RequestMethod.POST)
     public void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
@@ -88,6 +92,12 @@ public class UserController {
             user.setPassword(Encoder.EncoderByMd5(password));
             request.getSession().setAttribute("user", user);
             userDao.addUser(user);
+            User u=userDao.findUserByAccount(account);
+            Friends f=new Friends();
+            f.setFriends("");
+            f.setGroupName("MyFriends");
+            f.setOwnerId((int) u.getId());
+            friendsDAO.addFriends(f);
             myJSON.setStatus("200");
             writer.println(myJSON.toJSONString());
         } else
@@ -115,10 +125,7 @@ public class UserController {
         jsonObject.put("name",user.getNickName()+"");
         jsonObject.put("description",user.getDescription()+"");
         jsonObject.put("gender",user.getGender()+"");
-        int friendsNum=0;
-        if(user.getFriends()!=null){
-            friendsNum=user.getFriends().split(",").length;
-        }
+        int friendsNum=friendsDAO.queryFriendsNum(id);
         jsonObject.put("friendsNum",friendsNum);
         jsonObject.put("imageSrc",user.getImageSrc()+"");
         result.put("data",jsonObject.toJSONString());
@@ -172,19 +179,29 @@ public class UserController {
             writer.flush();
             return;
         }
-        List<User> list=userDao.queryFriendList(id);
+        Map<String,List<User>> fullList=friendsDAO.queryAllFriends(id);
         JSONArray array=new JSONArray();
-        if(list==null){
+        if(fullList.size()==0){
             myJSON.put("data",array);
             myJSON.put("status","200");
             writer.write(myJSON.toJSONString());
             writer.flush();
             return;
         }
-        for(User u:list){
-            JSONObject jsonObject= JSON.parseObject(JSON.toJSONString(u));
-            array.add(jsonObject.toJSONString());
+        String[] keys= fullList.keySet().toArray(new String[0]);
+        for(String key:keys){
+            List<User> list=fullList.get(key);
+            JSONObject group=new JSONObject();
+            JSONArray friends=new JSONArray();
+            for(User u:list){
+                JSONObject jsonObject= JSON.parseObject(JSON.toJSONString(u));
+                friends.add(jsonObject.toJSONString());
+            }
+            group.put("groupName",key);
+            group.put("friends",friends);
+            array.add(group.toJSONString());
         }
+
         myJSON.put("data",array);
         myJSON.put("status","200");
         writer.write(myJSON.toJSONString());
