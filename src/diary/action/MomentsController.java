@@ -144,7 +144,7 @@ public class MomentsController {
             writer.flush();
             return;
         }
-        List<Moments> list=momentsDAO.findMomengsByOwner(id);
+        List<Moments> list=momentsDAO.findMomentsByOwner(id);
         JSONArray array=new JSONArray();
         for(Moments m:list){
             JSONObject jsonObject= JSON.parseObject(JSON.toJSONString(m));

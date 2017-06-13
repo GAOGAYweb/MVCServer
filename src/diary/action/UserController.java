@@ -208,6 +208,31 @@ public class UserController {
         writer.flush();
 
     }
+    @RequestMapping(params = "method=friendGroup",method = RequestMethod.POST)
+    public void getGroup(HttpServletRequest request,HttpServletResponse response)throws IOException{
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json;charset=utf-8");
+        response.setCharacterEncoding("utf-8");
+        String id = request.getParameter("id");
+        JSONObject myJSON = new JSONObject();
+        PrintWriter writer = response.getWriter();
+        if (id == null) {
+            myJSON.put("status", "400");
+            writer.write(myJSON.toJSONString());
+            writer.flush();
+            return;
+        }
+        List<Friends> friends=friendsDAO.queryGroups(id);
+        JSONArray array=new JSONArray();
+        for(Friends f:friends){
+            JSONObject json=JSON.parseObject(JSON.toJSONString(f));
+            array.add(json.toJSONString());
+        }
+        myJSON.put("data",array);
+        myJSON.put("status","200");
+        writer.write(myJSON.toJSONString());
+        writer.flush();
+    }
     private void sendBadRequest(MyJSON myJSON,PrintWriter writer){
         myJSON.setStatus("400");
         writer.println(myJSON.toJSONString());

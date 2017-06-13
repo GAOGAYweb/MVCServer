@@ -60,7 +60,7 @@ public class MomentsDAO {
         return result;
     }
 
-    public List<Moments> findMomengsByOwner(String id) {
+    public List<Moments> findMomentsByOwner(String id) {
         String hql = "from Moments m where m.ownerId=" + id + " order by m.time desc ";
         Query query = getSession().createQuery(hql);
         List<Moments> list = query.list();

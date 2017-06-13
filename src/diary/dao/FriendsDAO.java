@@ -102,6 +102,12 @@ public class FriendsDAO {
         return result;
     }
 
+    public List<Friends> queryGroups(String owner){
+        String hql="from Friends f where f.ownerId="+owner;
+        Query query=getSession().createQuery(hql);
+        return query.list();
+    }
+
     public int queryFriendsNum(String id) {
         int count=0;
         String hql = "from Friends f where f.ownerId=" + id;
