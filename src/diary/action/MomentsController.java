@@ -51,15 +51,16 @@ public class MomentsController {
         response.setContentType("application/json;charset=utf-8");
         response.setCharacterEncoding("utf-8");
         String count=request.getParameter("count");
+        String id=request.getParameter("id");
         JSONObject myJSON=new JSONObject();
         PrintWriter writer = response.getWriter();
-        if (count == null) {
+        if (count == null||id==null) {
             myJSON.put("status","400");
             writer.println(myJSON.toJSONString());
             writer.flush();
             return;
         }
-        List<Moments> list=momentsDAO.listNewestMoments(Integer.parseInt(count));
+        List<Moments> list=momentsDAO.listNewestMoments(Integer.parseInt(count),id);
         JSONArray array=new JSONArray();
         for(Moments m:list){
             JSONObject jsonObject= JSON.parseObject(JSON.toJSONString(m));

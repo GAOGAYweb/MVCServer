@@ -78,8 +78,8 @@ public class MomentsDAO {
         return (Moments) query.uniqueResult();
     }
 
-    public List<Moments> listNewestMoments(int count) {
-        String hql = "from Moments m where m.limitUser='0' order by time desc";
+    public List<Moments> listNewestMoments(int count,String id) {
+        String hql = "from Moments m where m.limitUser='0'or m.ownerId="+id+" or m.limitUser like '%,"+id+"%' order by time desc";
         Query query = getSession().createQuery(hql);
         query.setFirstResult(0 + count * 10);
         query.setMaxResults(10 + count * 10);

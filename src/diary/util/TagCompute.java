@@ -15,14 +15,13 @@ import java.util.List;
 public class TagCompute {
     public static void main(String[] args) throws IOException {
 
-        String[] fils={"web/WEB-INF/applicationContext.xml","web/WEB-INF/dispatcher-servlet.xml","web/WEB-INF/hib-config.xml"};
-        ApplicationContext ac= new FileSystemXmlApplicationContext(fils);
-        MomentsDAO momentsDAO= (MomentsDAO) ac.getBean("MomentsDAO");
-        List<Moments> list=momentsDAO.listNewestMoments(0);
-
-        for(Moments m:list){
-            List<String> data= Arrays.asList(m.getContent());
-            System.out.println(NPLUtil.keywords(data,0.1));
-        }
+//        String[] fils={"web/WEB-INF/applicationContext.xml","web/WEB-INF/dispatcher-servlet.xml","web/WEB-INF/hib-config.xml"};
+//        ApplicationContext ac= new FileSystemXmlApplicationContext(fils);
+//        MomentsDAO momentsDAO= (MomentsDAO) ac.getBean("MomentsDAO");
+//
+//        for(Moments m:list){
+//            List<String> data= Arrays.asList(m.getContent());
+//            System.out.println(NPLUtil.keywords(data,0.1));
+//        }
     }
 }
