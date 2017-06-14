@@ -303,15 +303,16 @@ public class MomentsController {
             m.setTag(tag.substring(1,tag.length()));
         }
         if(limitGroup==null){
-            m.setLimit("0");
+            m.setLimitUser("0");
         }else{
             Friends f=friendsDAO.queryGroup(id,limitGroup);
-            m.setLimit("0,"+f.getFriends());
+            m.setLimitUser("0,"+f.getFriends());
         }
         double emotion=NPLUtil.sentimentAnalysis(data).get(0).get(0);
         m.setEmotion(emotion);
         m.setTime(new Date());
-        momentsDAO.addMoments(m);
+        System.out.println(JSON.toJSONString(m));
+        momentsDAO.update(m);
         myJSON.put("status",200);
         writer.write(myJSON.toJSONString());
         writer.flush();

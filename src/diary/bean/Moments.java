@@ -21,7 +21,7 @@ public class Moments {
     private String tag;
     private String streetName;
     private Double emotion;
-    private String limit;
+    private String limitUser;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -144,13 +144,13 @@ public class Moments {
     }
 
     @Basic
-    @Column(name = "limit", nullable = true, length = 200)
-    public String getLimit() {
-        return limit;
+    @Column(name = "limitUser", nullable = true, length = 200)
+    public String getLimitUser() {
+        return limitUser;
     }
 
-    public void setLimit(String limit) {
-        this.limit = limit;
+    public void setLimitUser(String limitUser) {
+        this.limitUser = limitUser;
     }
 
     @Override
@@ -172,7 +172,7 @@ public class Moments {
         if (tag != null ? !tag.equals(moments.tag) : moments.tag != null) return false;
         if (streetName != null ? !streetName.equals(moments.streetName) : moments.streetName != null) return false;
         if (emotion != null ? !emotion.equals(moments.emotion) : moments.emotion != null) return false;
-        if (limit != null ? !limit.equals(moments.limit) : moments.limit != null) return false;
+        if (limitUser != null ? !limitUser.equals(moments.limitUser) : moments.limitUser != null) return false;
 
         return true;
     }
@@ -195,7 +195,7 @@ public class Moments {
         result = 31 * result + (tag != null ? tag.hashCode() : 0);
         result = 31 * result + (streetName != null ? streetName.hashCode() : 0);
         result = 31 * result + (emotion != null ? emotion.hashCode() : 0);
-        result = 31 * result + (limit != null ? limit.hashCode() : 0);
+        result = 31 * result + (limitUser != null ? limitUser.hashCode() : 0);
         return result;
     }
 }
