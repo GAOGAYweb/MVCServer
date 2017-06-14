@@ -3,9 +3,11 @@ package diary.action;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import diary.bean.Friends;
 import diary.bean.Moments;
 import diary.bean.User;
 import diary.dao.CommentsDAO;
+import diary.dao.FriendsDAO;
 import diary.dao.MomentsDAO;
 import diary.dao.UserDao;
 import diary.util.NPLUtil;
@@ -34,6 +36,9 @@ public class MomentsController {
     private MomentsDAO momentsDAO;
     private UserDao userDao;
     private CommentsDAO commentsDAO;
+    private FriendsDAO friendsDAO;
+    @Resource
+    private  void setFriendsDAO(FriendsDAO friendsDAO){this.friendsDAO=friendsDAO;}
     @Resource
     private  void setCommentsDAO(CommentsDAO commentsDAO){this.commentsDAO=commentsDAO;}
     @Resource
@@ -105,7 +110,6 @@ public class MomentsController {
             writer.flush();
             return;
         }
-
         for(Moments m:list){
             JSONObject jsonObject= JSON.parseObject(JSON.toJSONString(m));
             User u=userDao.findUserById(String.valueOf(m.getOwnerId()));
@@ -258,6 +262,7 @@ public class MomentsController {
         String latitude=request.getParameter("latitude");
         String image=request.getParameter("image");
         String streetName=request.getParameter("streetName");
+        String limitGroup=request.getParameter("groupName");
         JSONObject myJSON = new JSONObject();
         PrintWriter writer = response.getWriter();
         if(id==null||content==null){
@@ -296,6 +301,12 @@ public class MomentsController {
             m.setTag("朋友圈");
         }else{
             m.setTag(tag.substring(1,tag.length()));
+        }
+        if(limitGroup==null){
+            m.setLimit("0");
+        }else{
+            Friends f=friendsDAO.queryGroup(id,limitGroup);
+            m.setLimit("0,"+f.getFriends());
         }
         double emotion=NPLUtil.sentimentAnalysis(data).get(0).get(0);
         m.setEmotion(emotion);

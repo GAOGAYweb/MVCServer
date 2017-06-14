@@ -79,7 +79,7 @@ public class MomentsDAO {
     }
 
     public List<Moments> listNewestMoments(int count) {
-        String hql = "from Moments m order by time desc";
+        String hql = "from Moments m where m.limit='0' order by time desc";
         Query query = getSession().createQuery(hql);
         query.setFirstResult(0 + count * 10);
         query.setMaxResults(10 + count * 10);
@@ -88,21 +88,7 @@ public class MomentsDAO {
     }
 
     public List<Moments> listFriendsMoments(int count, int userid) {
-        String hql = "from Friends f where f.ownerId=" + userid;
-        Query query = getSession().createQuery(hql);
-        List<Friends> flist=query.list();
-        String[] friends = new String[0];
-        for(Friends f:flist){
-            if(f.getFriends().length()==0)continue;
-            friends=getMergeArray(friends,f.getFriends().split(","));
-        }
-        String hql2 = "from Moments m where";
-        String temp = "";
-        for (String s : friends) {
-            temp += (" or owner_id=" + s);
-        }
-        hql2 += temp.substring(3, temp.length());
-        hql2 += " order by time desc";
+        String hql2 = "from Moments m where m.ownerId="+userid+" or m.limit like '%,"+userid+"%' order by time desc";
         System.out.println(hql2);
         Query query2 = getSession().createQuery(hql2);
         query2.setFirstResult(0 + count * 10);
