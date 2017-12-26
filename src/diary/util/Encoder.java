@@ -36,4 +36,7 @@ public class Encoder {
         }
 
     }
+    public static void main(String[] args){
+        System.out.println(EncoderByMd5("123456"));
+    }
 }

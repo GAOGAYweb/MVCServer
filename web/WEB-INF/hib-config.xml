@@ -23,11 +23,11 @@ http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
         <property name="jdbcUrl">
             <!-- <value>jdbc:mysql://localhost:3306/dream</value> -->
-            <value>jdbc:mysql://120.76.144.133:3306/adweb</value>
+            <value>jdbc:mysql://47.95.220.214:3306/xmgl</value>
         </property>
         <!-- <property name="user" value="root" /> -->
-        <property name="user" value="adwebdb"/>
-        <property name="password" value="adweb2017"/>
+        <property name="user" value="root"/>
+        <property name="password" value="pm2017ssABC!"/>
         <property name="maxPoolSize" value="12"/>
         <property name="minPoolSize" value="0"/>
         <property name="maxStatements" value="200"/>
