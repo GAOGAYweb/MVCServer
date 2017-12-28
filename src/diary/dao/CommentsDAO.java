@@ -28,6 +28,18 @@ public class CommentsDAO {
         List<Comments> list=query.list();
         return list;
     }
+    public List<Comments> queryMovieComments(String id){
+        String hql="from Comments c where c.movieId="+id+" and c.title!=null order by c.time";
+        Query query=getSession().createQuery(hql);
+        List<Comments> list=query.list();
+        return list;
+    }
+    public List<Comments> queryShortComments(String id){
+        String hql="from Comments c where c.movieId="+id+" and c.title=null order by c.time";
+        Query query=getSession().createQuery(hql);
+        List<Comments> list=query.list();
+        return list;
+    }
     public long getCommentsSize(String id){
         String hql="select count(*) from Comments c where c.momentId="+id;
         Query query=getSession().createQuery(hql);

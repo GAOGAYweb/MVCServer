@@ -49,7 +49,7 @@ http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
                 </prop>
                 <prop key="hibernate.show_sql">false</prop>
                 <prop key="hibernate.hbm2ddl.auto">update</prop>
-                <prop key="hibernate.connection.url">jdbc:mysql://120.76.144.133:3306/adweb</prop>
+                <prop key="hibernate.connection.url">jdbc:mysql://47.95.220.214:3306/xmgl</prop>
                 <prop key="hibernate.connection.driver_class">com.mysql.jdbc.Driver</prop>
                 <prop key="hibernate.connection.useUnicode">true</prop>
                 <prop key="hibernate.connection.characterEncoding">UTF-8</prop>
